@@ -1,0 +1,17 @@
+.idea
+cmake-build-debug
+cmake-build-release
+cmake-build-*
+[T]emp
+*.exe
+.vscode
+.vs
+*.vcxproj*
+cmake_install.cmake
+*.sln
+CMakeCache.txt
+build
+Debug
+_deps
+CMakeFiles
+*.swp
