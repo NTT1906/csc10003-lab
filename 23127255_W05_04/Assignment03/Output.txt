@@ -1,0 +1,80 @@
+Base constructor-0 param
+-> Base b1 được khởi tạo với Base()
+Base constructor-1 param
+-> Base b2(3) được khởi tạo với một tham số nên hàm Base(int) được gọi
+Base constructor-1 param
+-> Base *pb = new Base(1) được alloc với một tham số nên Base(int) được gọi
+Base constructor-0 param
+DerivedA constructor-0 param
+-> DerivedA da1 kế thừa Base nên khi gọi DerivedA không có tham số thì DerivedA() được gọi -> Base() được khởi tạo và gọi tự động trước khi thân của DerivedA được gọi
+Base constructor-0 param
+DerivedA constructor-1 param
+-> DerivedA da2(2) được gọi với một tham số nên DerivedA(int) được gọi, Base() được khởi tạo và gọi rồi tới phần thân DerivedA(int) chạy
+Base constructor-0 param
+DerivedA constructor-2 params
+-> Tương tự trên nhưng hai tham số
+Base constructor-0 param
+-> DerivedA(const DerivedA &da) được gọi, khởi tạo Base() tự động và chạy trước thân DerivedA(const DerivedA &da). Không có output trong hàm DerivedA(const DerivedA &da) nên chỉ có mỗi output của Base constructor 0
+Base constructor-0 param
+DerivedA constructor-2 params
+-> pb = new DerivedA(4, 5) được alloc nên khởi tạo và chạy Base() rồi chạy thân của DerivedA(int, int), sau đó pointer hiểu DerivedA vừa rồi là Base
+Base constructor-0 param
+DerivedB constructor-0 param
+-> DerivedB db1 tương tự DerivedA, Base được khởi tạo và gọi trước rồi tới thân của DerivedB
+Base constructor-0 param
+DerivedB constructor-1 param
+-> DerivedB db2(2.7) -> Base() ->thân DerivedB db2(float)
+Base constructor-1 param
+DerivedB constructor-2 params
+-> DerivedB(int u, float x) : Base(u) -> Base(int) -> thân DerivedB(int u, float x)
+Base copy constructor
+DerivedB copy constructor
+-> DerivedB(const DerivedB &db) : Base(db) -> Base(db) -> thân DerivedB(const DerivedB &db)
+Base constructor-1 param
+DerivedB constructor-2 params
+-> pb = new DerivedB(4, 5) : alloc DerivedB -> Base(4) -> thân DerivedB(4, 5)
+Base copy constructor
+Function f
+Base destructor
+-> f(b1) -> b1 được copy sang Base b tạm (gọi Base copy constructor) -> Thân hàm f được gọi -> Ra khỏi scope hàm, stack giải phóng -> Base destrcutor
+Base copy constructor
+Function f
+Base destructor
+-> f(da1) -> da1 được copy, hiểu như type Base (gọi Base copy constructor) -> Thân hàm f được gọi -> Ra khỏi scope hàm, stack giải phóng -> Base destrcutor
+Base copy constructor
+Function f
+Base destructor
+-> f(db1) -> da1 được copy, hiểu như type Base (gọi Base copy constructor) -> Thân hàm f được gọi -> Ra khỏi scope hàm, stack giải phóng -> Base destrcutor
+Base destructor
+-> delete pb -> Giải phóng Base pb được alloc -> Gọi hàm Base destructor, vì db2 được hiểu là Base* nên không gọi ~DerivedB(), trước đó mất đi leak địa chỉ của Base() và DerivedA() được alloc
+
+--------------------------------------------------------------
+Ở dưới đây, khi ra khỏi scope, stack được giải phóng. Vì vậy nên tuân theo quy tắc LiFo (Last in First out), nên những thứ vào stack đằng sau sẽ được giải phóng trước.
+DerivedB destructor
+Base destructor
+-> db4 được giải phóng -> ~DerivedB() -> ~Base()
+DerivedB destructor
+Base destructor
+-> db3 được giải phóng -> ~DerivedB() -> ~Base()
+DerivedB destructor
+Base destructor
+-> db2 được giải phóng -> ~DerivedB() -> ~Base()
+DerivedB destructor
+Base destructor
+-> db1 được giải phóng -> ~DerivedB() -> ~Base()
+DerivedA destructor
+Base destructor
+-> da4 được giải phóng -> ~DerivedA() -> ~Base()
+DerivedA destructor
+Base destructor
+-> da3 được giải phóng -> ~DerivedA() -> ~Base()
+DerivedA destructor
+Base destructor
+-> da2 được giải phóng -> ~DerivedA() -> ~Base()
+DerivedA destructor
+Base destructor
+-> da1 được giải phóng -> ~DerivedA() -> ~Base()
+Base destructor
+-> b2 được giải phóng -> ~Base()
+Base destructor
+-> b1 được giải phóng -> ~Base()
