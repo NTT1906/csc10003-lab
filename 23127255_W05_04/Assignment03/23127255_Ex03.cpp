@@ -96,40 +96,22 @@ void f(Base b) {
 }
 
 int main() {
-	cout << "L1\n";
 	Base b1;
-	cout << "L2\n";
 	Base b2(3);
-	cout << "L3\n";
 	Base *pb = new Base(1);
-	cout << "L4\n";
 	DerivedA da1;
-	cout << "L5\n";
 	DerivedA da2(2);
-	cout << "L6\n";
 	DerivedA da3(2, 3);
-	cout << "L7\n";
 	DerivedA da4(da2);
-	cout << "L8\n";
 	pb = new DerivedA(4, 5);
-	cout << "L9\n";
 	DerivedB db1;
-	cout << "L10\n";
 	DerivedB db2(2.7);
-	cout << "L11\n";
 	DerivedB db3(3, 2.7);
-	cout << "L12\n";
 	DerivedB db4(db2);
-	cout << "L13\n";
 	pb = new DerivedB(4, 5);
-	cout << "L14\n";
 	f(b1);
-	cout << "L15\n";
 	f(da1);
-	cout << "L16\n";
 	f(db1);
-	cout << "L17\n";
 	delete pb;
-	cout << "L18\n";
 	return 0;
 }

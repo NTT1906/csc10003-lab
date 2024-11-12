@@ -1,7 +1,7 @@
 #include "inventory.h"
 
-Slot::Slot() : product(), quantity{}, totalPrice{} {}
-Slot::Slot(const Product &product, int quantity) : product(product), quantity(quantity), totalPrice{} {}
+Slot::Slot() : product(), quantity{} {}
+Slot::Slot(const Product &product, int quantity) : product(product), quantity(quantity) {}
 Product &Slot::getProduct() { return product; }
 
 int Slot::getQuantity() const { return quantity; }
@@ -11,7 +11,9 @@ Slot &Slot::setQuantity(int _quantity) {
 	return *this;
 }
 
-double Slot::getTotalPrice() const { return quantity * product.getPrice(); }
+double Slot::getTotalPrice() const {
+	return quantity * product.getPrice();
+}
 
 Slot &Inventory::getSlot(int slot) {
 	if (!isValidSlot(slot)) {
@@ -76,6 +78,34 @@ void Inventory::display() const {
 	}
 	std::cout << "\n---------------------\n";
 	std::cout << "TOTAL PRICE: " << totalPrice << "\n";
+	if (!vouchers.empty()) {
+		double bestValue = 0.0;
+		Voucher cv = vouchers[0];
+		for (auto &v : vouchers) {
+			double discount = v.getData();
+			if (v.getVoucherType() == Voucher::TYPE_PERCENT) {
+				discount *= totalPrice / 100.0;
+			}
+			if (discount > bestValue) {
+				bestValue = discount;
+				cv = v;
+			}
+		}
+
+		std::cout << "Vouchers type: ";
+		if (cv.getVoucherType() == Voucher::TYPE_DISCOUNT) {
+			std::cout << "discount\n";
+			std::cout << "Voucher discount: " << cv.getData() << "\n";
+		} else {
+			std::cout << "percent\n";
+			std::cout << "Voucher percentage: " << cv.getData() << "\n";
+			std::cout << "Voucher discount: " << cv.getData() * totalPrice / 100.0 << "\n";
+		}
+		if (bestValue > totalPrice) totalPrice = 0;
+		else totalPrice -= bestValue;
+		std::cout << "FINAL PRICE: " << totalPrice << '\n';
+
+	}
 }
 
 Inventory &Inventory::addProduct(const Product &product, int amount = 1) {
@@ -101,17 +131,85 @@ int Inventory::searchProduct(const Product &product) {
 
 void Inventory::displayEnumeratedList() const {
 	size_t l = slots.size();
-	std::cout << "                         ENUMERATED INVENTORY:\n";
-	printf("%-7s | %-30s | %-10s | %-30s | %-20s\n", "Idx", "Product Name", "Size", "Shop", "Price");
+	std::cout << "                                              ENUMERATED INVENTORY:\n";
+	printf("%-4s | %-30s | %-10s | %-30s | %-20s | %-10s\n", "Idx", "Product Name", "Size", "Shop", "Price", "Amount");
 	for (int i = 0; i < l; ++i) {
 		Slot slot = slots[i];
 		Product product = slot.getProduct();
-		printf("%-7d | %-30s | %-10s | %-30s | %-20.2f\n", i, product.getName().c_str(), product.getSize().c_str(), product.getShop().c_str(), product.getPrice());
+		printf("%-4d | %-30s | %-10s | %-30s | %-20.2f | %-10d\n", i, product.getName().c_str(), product.getSize().c_str(), product.getShop().c_str(), product.getPrice(), slot.getQuantity());
 //		std::cout << i << ") " << product.getName() << " | " << product.getSize() << " | " << product.getShop() << " | " << product.getPrice() << " = " << slot.getQuantity() << "\n";
 	}
 }
 
 size_t Inventory::getInventorySize() const { return slots.size(); }
+
+bool Inventory::loadProductFromFile(const std::string &fileName) {
+	slots.clear();
+	return addProductFromFile(fileName);
+}
+
+bool Inventory::addProductFromFile(const std::string &fileName) {
+	std::ifstream file(fileName.c_str());
+	if (!file.is_open()) {
+		return false;
+	}
+
+	std::string tmp;
+	while (std::getline(file, tmp)) {
+		std::istringstream is(tmp);
+		std::string pName, pSize, pShop, pPrice;
+		if (!std::getline(is, pName, ';')) {
+			continue;
+		}
+		if (!std::getline(is, pShop, ';')) {
+			continue;
+		}
+		if (!std::getline(is, pSize, ';')) {
+			continue;
+		}
+		if (!std::getline(is, pPrice, ';') || pPrice.empty()) {
+			continue;
+		}
+		std::string sAmount;
+		int amount;
+		if (!std::getline(is, sAmount) || sAmount.empty()) {
+			amount = 1;
+		} else {
+			amount = std::stoi(sAmount);
+		}
+		addProduct({pName, pSize, pShop, std::stod(pPrice)}, amount);
+	}
+	file.close();
+	return true;
+}
+
+bool Inventory::saveOrderToFile(const std::string &fileName) {
+	std::ofstream file(fileName.c_str());
+	if (!file.is_open()) {
+		return false;
+	}
+	for (auto &slot : slots) {
+		Product p = slot.getProduct();
+		file << p.getName() << ";" << p.getShop() << ";" << p.getSize() << ";" << p.getPrice() << ";" << slot.getQuantity() << '\n';
+	}
+	file.close();
+	return true;
+}
+
+Inventory &Inventory::addVoucher(const Voucher &voucher) {
+	vouchers.push_back(voucher);
+	return *this;
+}
+
+void Inventory::displayVouchers() const {
+	size_t l = vouchers.size();
+	std::cout << "VOUCHER LIST:\n";
+	printf("%-3s | %-3s | %-10s\n", "Idx", "Type", "Data");
+	for (int i = 0; i < l; ++i) {
+		Voucher v = vouchers[i];
+		printf("%-3d | %-3d  | %-10f\n", i, v.getVoucherType(), v.getData());
+	}
+}
 
 Inventory::Inventory() = default;
 

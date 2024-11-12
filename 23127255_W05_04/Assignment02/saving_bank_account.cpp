@@ -2,18 +2,19 @@
 
 SavingBankAccount &SavingBankAccount::input() {
 	BankAccount::input();
-	std::cout << "Input annual interest rate: ";
+	std::cout << "Input annual interest rate (%): ";
 	std::cin >> annualInterestRate;
-	std::cout << "Input period              : ";
+	annualInterestRate /= 100.0;
+	std::cout << "Input period                  : ";
 	std::cin >> period;
-	std::cout << "Input saved months        : ";
+	std::cout << "Input saved months            : ";
 	std::cin >> savedMonths;
 	return *this;
 }
 
 SavingBankAccount &SavingBankAccount::output() {
 	BankAccount::output();
-	std::cout << "Annual interest rate: " << annualInterestRate << '\n';
+	std::cout << "Annual interest rate: " << annualInterestRate * 100.0 << "%\n";
 	std::cout << "Period              : " << period << '\n';
 	std::cout << "Saved months        : " << savedMonths << '\n';
 	return *this;
@@ -44,7 +45,8 @@ double SavingBankAccount::withdrawImmediately() {
 //	return r * pow(periodRate, cycle) * leftOverRate;
 	SavingBankAccount::recalculateInterest();
 	double r = BankAccount::withdraw(balance);
-	double leftOverRate = 1 + (0.02 * 12 / (savedMonths % period)); // (100% + 2% / 12 * leftOverMonths)^1
+	period = 0;
+	double leftOverRate = 1 + (0.02 * 12 / (savedMonths)); // (100% + 2% / 12 * leftOverMonths)^1
 	savedMonths = 0;
 	return r * leftOverRate;
 }

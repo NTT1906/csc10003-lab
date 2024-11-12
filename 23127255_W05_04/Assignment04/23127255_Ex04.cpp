@@ -7,7 +7,7 @@ void clearScreen() {
 	// Clear screen for Windows
 	std::system("cls");
 #else
-	// Clear screen for Linux and other Unix-like systems
+	// Clear screen for Linux and other Unix-like systems; ignoring MAC, Android, ...
 	std::system("clear");
 #endif
 }
@@ -30,16 +30,23 @@ int main() {
 		cout << "2. Remove product by search\n";
 		cout << "3. Remove product by slot's ID\n";
 		cout << "4. Display Inventory/Price\n";
-		cout << "5. Change slot quantity\n";
-		cout << "6. Exit\n";
+		cout << "5. Display Inventory/Price (List)\n";
+		cout << "6. Change slot quantity\n";
+		cout << "7. Load products from file (delete existed products)\n";
+		cout << "8. Add products from file\n";
+		cout << "9. Save orders to file\n";
+		cout << "10. Add promotions (vouchers)\n";
+		cout << "11. Display promotions (vouchers)\n";
+		cout << "12. Exit\n";
 		cout << "0. Clear screen\n";
 		cout << "Enter your choice: ";
 		cin >> choice;
 
 		switch (choice) {
-			case 0:
+			case 0: {
 				clearScreen();
 				break;
+			}
 			case 1: {
 				string pName, pSize, pShop;
 				double uPrice = -1;
@@ -91,14 +98,14 @@ int main() {
 				inv.displayEnumeratedList();
 				int idx = -1;
 				size_t l = inv.getInventorySize();
-				cout << "Enter idx (enter -1 to return to main menu): ";
 				do {
+					cout << "Enter idx (enter -1 to return to main menu): ";
 					cin >> idx;
 					if (idx == -1) break;
 					if (idx >= l || idx < 0) {
 						cout << "Invalid index, please input the correct value (0-" << l << ")\n";
 					}
-				} while (idx != -1 && idx < l && idx >= 0);
+				} while (idx != -1 && (idx >= l || idx < 0));
 				if (idx == -1) {
 					cout << "Return to main MENU\n";
 				} else if (l != 0) {
@@ -108,10 +115,15 @@ int main() {
 				}
 				break;
 			}
-			case 4:
+			case 4: {
 				inv.display();
 				break;
+			}
 			case 5: {
+				inv.displayEnumeratedList();
+				break;
+			}
+			case 6: {
 				inv.displayEnumeratedList();
 				int idx = -1;
 				size_t l = inv.getInventorySize();
@@ -135,10 +147,65 @@ int main() {
 				}
 				break;
 			}
-			case 6:
+			case 7: {
+				cin.ignore();
+				cout << "Enter file path: ";
+				string fileName;
+				getline(cin, fileName);
+				if (inv.loadProductFromFile(fileName)) {
+					cout << "Successfully load products from file \"" << fileName << "\"\n";
+				} else {
+					cout << "Failed to load products from file \"" << fileName << "\"\n";
+				}
+				break;
+			}
+			case 8: {
+				cin.ignore();
+				cout << "Enter file path: ";
+				string fileName;
+				getline(cin, fileName);
+				if (inv.addProductFromFile(fileName)) {
+					cout << "Successfully add products from file \"" << fileName << "\"\n";
+				} else {
+					cout << "Failed to add products from file \"" << fileName << "\"\n";
+				}
+				break;
+			}
+			case 9: {
+				cin.ignore();
+				cout << "Enter file path: ";
+				string fileName;
+				getline(cin, fileName);
+				if (inv.saveOrderToFile(fileName)) {
+					cout << "Successfully saved the orders to file \"" << fileName << "\"\n";
+				} else {
+					cout << "Failed to save the orders to file \"" << fileName << "\"\n";
+				}
+				break;
+			}
+			case 10: {
+				cout << "Enter voucher type (percent = 0, discount = 1): ";
+				int type;
+				cin >> type;
+				if (type == Voucher::TYPE_DISCOUNT) {
+					cout << "Enter discount amount: ";
+				} else {
+					cout << "Enter percentage amount (<=100%): ";
+				}
+				double data;
+				cin >> data;
+				inv.addVoucher({data, type});
+				break;
+			}
+			case 11: {
+				inv.displayVouchers();
+				break;
+			}
+			case 12: {
 				cout << "Exiting...\n";
 				choice = -1;
 				break;
+			}
 			default:
 				cout << "Invalid choice. Please try again.\n";
 				break;
@@ -146,48 +213,4 @@ int main() {
 	} while (choice != -1);
 	delete &Inventory::getInstance();
 	return 0;
-
-//	int choice;
-//	do {
-//		cout << "\nMenu:\n";
-//		cout << "1. Add Product\n";
-//		cout << "2. Display Inventory\n";
-//		cout << "3. Display Total Inventory Value\n";
-//		cout << "4. Exit\n";
-//		cout << "Enter your choice: ";
-//		cin >> choice;
-//
-//		switch (choice) {
-//			case 1: {
-//				string name;
-//				double unitPrice;
-//				int quantity;
-//
-//				cout << "Enter product name: ";
-//				cin >> ws; // Clear leading whitespace
-//				getline(cin, name);
-//				cout << "Enter unit price: ";
-//				cin >> unitPrice;
-//				cout << "Enter quantity: ";
-//				cin >> quantity;
-//
-//				Product2 product(name, unitPrice, quantity);
-//				inventory.addProduct(product);
-//				cout << "Product added successfully!\n";
-//				break;
-//			}
-//			case 2:
-//				inventory.displayInventory();
-//				break;
-//			case 3:
-//				inventory.displayTotalInventoryValue();
-//				break;
-//			case 4:
-//				cout << "Exiting...\n";
-//				break;
-//			default:
-//				cout << "Invalid choice. Please try again.\n";
-//				break;
-//		}
-//	} while (choice != 4);
 }
