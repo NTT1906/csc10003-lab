@@ -1,0 +1,49 @@
+#include <iostream>
+using namespace std;
+
+#include "cstring"
+
+//char *strdup(char *s) {
+//	char *r = new char[strlen(s)];
+//	strcpy(r, s);
+//	return r;
+//}
+
+class A{
+	char *m_s;
+public:
+	A() { m_s = strdup("default"); }
+	A(char *s) { m_s = s; }
+	virtual void prepare() { cout << "A "; }
+	void display() {
+		prepare();
+		cout << m_s << endl;
+	}
+};
+
+class B : public A{
+public:
+	B(char *s) : A(s) {}
+	B(const B &b) {}
+	void prepare() { cout << "B "; }
+};
+
+void foo(A *obj1, A obj2) {
+	obj1->display();
+	obj2.display();
+}
+
+int main() {
+	B obj1("text");
+	A *obj2 = new B(obj1);
+	foo(&obj1, *obj2);
+
+	return 0;
+}
+
+// Question 1:
+
+// B text
+// A default
+
+// Question 2:
