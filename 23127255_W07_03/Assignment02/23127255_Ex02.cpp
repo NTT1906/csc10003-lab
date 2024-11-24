@@ -42,6 +42,7 @@ void foo(A *obj1, A obj2) {
 //	tmp.display();
 	obj1->display();
 	obj2.display();
+	(&obj2)->display();
 }
 
 int main() {
