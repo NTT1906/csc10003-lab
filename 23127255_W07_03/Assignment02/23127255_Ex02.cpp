@@ -12,7 +12,8 @@ public:
 	}
 	A(char *s) {
 		cout << "Input char * A got called\n";
-		m_s = s;
+//		m_s = s;
+		m_s = strdup(s);
 	}
 	A(const A &other) {
 		cout << "Copy A got called!\n";
@@ -20,8 +21,13 @@ public:
 	}
 	virtual void prepare() { cout << "A "; }
 	void display() {
-		prepare();
+		this->prepare();
 		cout << m_s << endl;
+	}
+	virtual ~A() {
+		cout << "Destroying ";
+		display();
+		delete m_s;
 	}
 };
 
@@ -34,6 +40,8 @@ public:
 		cout << "Copy B got called\n";
 	}
 	void prepare() { cout << "B "; }
+	~B() override {
+	};
 };
 
 void foo(A *obj1, A obj2) {
@@ -52,12 +60,10 @@ int main() {
 	std::cout << "Obj1 REF: ";
 	(&obj1)->display();
 	A *obj2 = new B(obj1);
-	std::cout << "Obj2 PTR  : ";
 	obj2->display();
 	std::cout << "Obj2 DEREF: ";
 	(*obj2).display();
 	foo(&obj1, *obj2);
-
+	delete obj2;
 	return 0;
 }
-

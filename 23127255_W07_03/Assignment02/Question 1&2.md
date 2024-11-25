@@ -1,8 +1,31 @@
-## Header
-Name: <br>
-ID: 23127255
+<h1 align="center">VNUHCM-UNIVERSITY OF SCIENCE</h1>
+<h2 align="center">FACULTY OF INFORMATION TECHNOLOGY</h2>
+<h3 align="center">CSC10003 – OBJECT-ORIENTED PROGRAMMING </h3>
+<hr><h1 align="center">Lab 5: Assignment 02 Question 1 & 2 </h1>
+<hr>
 
-**SUMMARY**
+<div style="display: flex; justify-content: space-between;">
+  <div style="width: 60%; text-align: left;">
+	<b>Lecturer</b><br>
+    Mr. Nguyễn Lê Hoàng Dũng<br>
+    Mr. Hồ Tuấn Thanh<br>
+	<b>Students</b><br>
+    23127255 - Nguyễn Thọ Tài  
+  </div>
+
+  <div style="width: 20%; text-align: right;">
+	<b>Class</b><br>
+    23CLC08  
+  </div>
+
+</div>
+
+<p align="center">
+<img alt="ovo_warning" src="https://upload.wikimedia.org/wikipedia/vi/c/ca/Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Khoa_h%E1%BB%8Dc_T%E1%BB%B1_nhi%C3%AAn%2C_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Qu%E1%BB%91c_gia_Th%C3%A0nh_ph%E1%BB%91_H%E1%BB%93_Ch%C3%AD_Minh.svg" width="100" height="100" style="background-color:white;padding:10px;"><br>
+<sup>25/11/2024</sup>
+</p>
+
+## SUMMARY
 - [Original Code](#code)
 - [Question 1: What is printed to the console? Give an brief explanation](#question-1-what-is-printed-to-the-console-give-an-brief-explanation)
     + [Q1.1 Output](#1-ouput)
@@ -52,7 +75,7 @@ ID: 23127255
 
 ## Question 1: What is printed to the console? Give an brief explanation.
 ### 1. Ouput
-```ps1
+```
 B text
 A default
 ```
@@ -103,7 +126,7 @@ Thus, obj1 still keep its polymorphism and obj2 lost its polymorphism.<br>
 10		}
 11	};
 ```
-**Solutions:** Add a deconstructor to free the allocated `m_s`
+**Solutions:** Add a deconstructor to free the allocated `m_s`. Optionally, making the deconstructor virtual so derived class B can delete its allocated properties.
 ```cpp
 1	class A{
 2		char *m_s;
@@ -127,44 +150,71 @@ Thus, obj1 still keep its polymorphism and obj2 lost its polymorphism.<br>
 29	delete obj2;
 30	return 0;
 ```
-#### 1.3 TODO
-### 2. Final code
+#### 1.3 Class A got shallow copy leading to its copy deleting the allocated properties
+This leading to multiple delete of the same pointer
+**Solutions:** Add a deep copy constructor to class A
 ```cpp
--5	#include <iostream>
--4	using namespace std;
--3	
--2	#include "cstring"
--1
 1	class A{
 2		char *m_s;
 3	public:
 4		A() { m_s = strdup("default"); }
-5		~A() { delete[] m_s; }
-6		A(char *s) { m_s = s; }
-7		virtual void prepare() { cout << "A "; }
-8		void display() {
-9			prepare();
-10			cout << m_s << endl;
-11		}
-12	};
-13
-14	class B : public A{
-15	public:
-16		B(char *s) : A(s) {}
-17		B(const B &b) {}
-18		void prepare() { cout << "B "; }
-19	};
-20
-21	void foo(A *obj1, A obj2) {
-22		obj1->display();
-23		obj2.display();
-24	}
-25
-26	int main() {
-27		B obj1("text");
-28		A *obj2 = new B(obj1);
-29		foo(&obj1, *obj2);
-30 		delete obj2;
-31		return 0;
-32	}
+5		A(const A &other) { m_s = strdup(other.m_s); }
+```
+#### 1.4 Line 5, m_s get shallow-copied. m_s might not point to a dynamic array, m_s is not in Heap
+```cpp
+1	class A{
+2		char *m_s;
+3	public:
+4		A() { m_s = strdup("default"); }
+5		A(char *s) { m_s = s; }
+```
+Either derived class of A pointing to the same memory and multiple deletes of the same pointer or m_s is not in Heap (char [100] in heap)
+**Solutions:** Allocate a copy of m_s
+```cpp
+1	class A{
+2		char *m_s;
+3	public:
+4		A() { m_s = strdup("default"); }
+5		A(char *s) { m_s = strdup(s); }
+```
+### 2. Final code
+```cpp
+#include <iostream>
+using namespace std;
+
+#include "cstring"
+
+class A{
+	char *m_s;
+public:
+	A() { m_s = strdup("default"); }
+	~A() { delete[] m_s; }
+	A(char *s) { m_s = strdup(s); }
+	A(const A &other) { m_s = strdup(other.m_s); }
+	virtual void prepare() { cout << "A "; }
+	void display() {
+		prepare();
+		cout << m_s << endl;
+	}
+};
+
+class B : public A{
+public:
+	B(char *s) : A(s) {}
+	B(const B &b) {}
+	void prepare() { cout << "B "; }
+};
+
+void foo(A *obj1, A obj2) {
+	obj1->display();
+	obj2.display();
+}
+
+int main() {
+	B obj1("text");
+	A *obj2 = new B(obj1);
+	foo(&obj1, *obj2);
+	delete obj2;
+	return 0;
+}
 ```
