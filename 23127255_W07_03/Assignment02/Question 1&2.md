@@ -5,36 +5,35 @@
 <hr>
 
 <div style="display: flex; justify-content: space-between;">
-  <div style="width: 60%; text-align: left;">
+  <div style="width: 60%; text-align: left; font-size:15px; padding-left:10%;">
 	<b>Lecturer</b><br>
     Mr. Nguyễn Lê Hoàng Dũng<br>
     Mr. Hồ Tuấn Thanh<br>
 	<b>Students</b><br>
-    23127255 - Nguyễn Thọ Tài  
+    23127255 - Nguyễn Thọ Tài
   </div>
 
-  <div style="width: 20%; text-align: right;">
+  <div style="width: 20%; text-align: right; font-size:15px; padding-right:10%;">
 	<b>Class</b><br>
     23CLC08  
   </div>
-
 </div>
 
 <p align="center">
-<img alt="ovo_warning" src="https://upload.wikimedia.org/wikipedia/vi/c/ca/Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Khoa_h%E1%BB%8Dc_T%E1%BB%B1_nhi%C3%AAn%2C_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Qu%E1%BB%91c_gia_Th%C3%A0nh_ph%E1%BB%91_H%E1%BB%93_Ch%C3%AD_Minh.svg" width="100" height="100" style="background-color:white;padding:10px;"><br>
+<img alt="ovo_warning" src="https://upload.wikimedia.org/wikipedia/vi/c/ca/Tr%C6%B0%E1%BB%9Dng_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Khoa_h%E1%BB%8Dc_T%E1%BB%B1_nhi%C3%AAn%2C_%C4%90%E1%BA%A1i_h%E1%BB%8Dc_Qu%E1%BB%91c_gia_Th%C3%A0nh_ph%E1%BB%91_H%E1%BB%93_Ch%C3%AD_Minh.svg" width="200" height="200" style="padding:10px;"><br>
 <sup>25/11/2024</sup>
 </p>
 
-## SUMMARY
-- [Original Code](#code)
+## Summary
+- [Original Code](#original-code)
 - [Question 1: What is printed to the console? Give an brief explanation](#question-1-what-is-printed-to-the-console-give-an-brief-explanation)
     + [Q1.1 Output](#1-ouput)
     + [Q1.2 Explanation](#2-explanation)
 - [Question 2: Identify the memory issues in the above program and the correct them](#question-2-identify-the-memory-issues-in-the-above-program-and-the-correct-them)
 	+ [Q2.1 Memory issue](#1-memory-issue)
 	+ [Q2.2 Final code](#2-final-code)
-
-## Code
+<br><br><br><br><br><br><br><br><br>
+## Original Code
 ```cpp
 -5	#include <iostream>
 -4	using namespace std;
