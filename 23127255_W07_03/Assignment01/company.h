@@ -2,6 +2,7 @@
 #define COMPANY_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include "employee.h"
 #include "office_employee.h"
@@ -14,6 +15,8 @@ public:
 	~Company();
 	Company(const Company &other) = default;
 	Company &addEmployees(const std::vector<Employee *> &employee);
+	Company &loadFromFile(const std::string &filePath);
+	Company &saveToFile(const std::string &filePath);
 	bool addEmployee(Employee *employee);
 	bool addEmployee(const OfficeEmployee &employee);
 	bool addEmployee(const Worker &employee);

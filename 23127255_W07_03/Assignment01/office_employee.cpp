@@ -6,12 +6,21 @@ OfficeEmployee::OfficeEmployee(const OfficeEmployee &other) : Employee(other), w
 
 OfficeEmployee::OfficeEmployee(const std::string &s) : workingDays(0), payPerDay(0) {
 	std::istringstream ss(s);
-	std::getline(ss, id);
-	std::getline(ss, fullName);
-	std::getline(ss, hireDate);
-	std::getline(ss, address);
-	ss >> workingDays;
-	ss >> payPerDay;
+	std::getline(ss, id, ';');
+	std::getline(ss, fullName, ';');
+	std::getline(ss, hireDate, ';');
+	std::getline(ss, address, ';');
+
+	std::string tmp;
+	if (std::getline(ss, tmp, ';') && !tmp.empty()) {
+		workingDays = std::stoi(tmp);
+	}
+	if (std::getline(ss, tmp)) {
+		tmp = tmp.substr(0, tmp.find(';'));
+		if (!tmp.empty()) {
+			payPerDay = std::stoi(tmp);
+		}
+	}
 }
 
 OfficeEmployee::OfficeEmployee(OfficeEmployee &&other) noexcept : Employee(std::move(other)), workingDays(other.workingDays), payPerDay(other.payPerDay) {
@@ -33,7 +42,7 @@ void OfficeEmployee::output() const {
 }
 
 std::ostream &operator<<(std::ostream &os, const OfficeEmployee &employee) {
-	os << employee.id << '\n' << employee.fullName << '\n' << employee.hireDate << '\n' << employee.address << '\n' << employee.workingDays << " " << employee.payPerDay;
+	os << employee.id << ';' << employee.fullName << ';' << employee.hireDate << ';' << employee.address << ';' << employee.workingDays << ';' << employee.payPerDay;
 	return os;
 }
 

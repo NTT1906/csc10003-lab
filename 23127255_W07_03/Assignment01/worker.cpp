@@ -6,13 +6,21 @@ Worker::Worker(const Worker &other) : Employee(other), itemsProduced(other.items
 
 Worker::Worker(const std::string &s) : itemsProduced(0), ratePerItem(0) {
 	std::istringstream ss(s);
-	std::getline(ss, id);
-	std::getline(ss, fullName);
-	std::getline(ss, hireDate);
-	std::getline(ss, address);
+	std::getline(ss, id, ';');
+	std::getline(ss, fullName, ';');
+	std::getline(ss, hireDate, ';');
+	std::getline(ss, address, ';');
 
-	ss >> itemsProduced;
-	ss >> ratePerItem;
+	std::string tmp;
+	if (std::getline(ss, tmp, ';') && !tmp.empty()) {
+		itemsProduced = std::stoi(tmp);
+	}
+	if (std::getline(ss, tmp)) {
+		tmp = tmp.substr(0, tmp.find(';'));
+		if (!tmp.empty()) {
+			ratePerItem = std::stoi(tmp);
+		}
+	}
 }
 
 Worker::Worker(Worker &&other) noexcept : Employee(std::move(other)), itemsProduced(other.itemsProduced), ratePerItem(other.ratePerItem) {
@@ -33,8 +41,7 @@ void Worker::output() const {
 }
 
 std::ostream &operator<<(std::ostream &os, const Worker &employee) {
-	os << employee.id << '\n' << employee.fullName << '\n' << employee.hireDate << '\n' << employee.address << '\n' << employee.itemsProduced << " " << employee.ratePerItem;
-	return os;
+	return os << employee.id << ';' << employee.fullName << ';' << employee.hireDate << ';' << employee.address << ';' << employee.itemsProduced << ';' << employee.ratePerItem;
 }
 
 double Worker::computeSalary() {

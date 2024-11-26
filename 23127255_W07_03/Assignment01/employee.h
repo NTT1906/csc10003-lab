@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <sstream>
-#include "employee_type.h"
 
 class Employee{
 protected:
@@ -29,6 +28,12 @@ public:
 	virtual void output() const;
 	virtual double computeSalary() = 0;
 	friend std::ostream &operator<<(std::ostream &os, const Employee &employee);
+};
+
+class EmployeeType{
+public:
+	static const int TYPE_OFFICE = 0;
+	static const int TYPE_WORKER = 1;
 };
 
 #endif //EMPLOYEE_H

@@ -18,6 +18,7 @@ bool Company::addEmployee(const Worker &employee) {
 }
 
 bool Company::addEmployee(Employee *employee) {
+	if (employee == nullptr) return false;
 	for (auto &e : employees) {
 		if (e->getId() == employee->getId()) {
 			return false;
@@ -74,5 +75,48 @@ Company &Company::addEmployees(const std::vector<Employee *> &_employees) {
 			delete e;
 		}
 	}
+	return *this;
+}
+
+Company &Company::loadFromFile(const std::string &filePath) {
+	std::ifstream file(filePath.c_str());
+	if (!file.is_open()) {
+		std::cout << "Failed to open file \"" << filePath << "\"\n";
+		return *this;
+	}
+	std::string tmp;
+	while (std::getline(file, tmp, '\n')) {
+		std::string typeS;
+		unsigned long long pos = tmp.find(';');
+		typeS = tmp.substr(0, pos);
+		if (typeS.empty()) {
+			continue;
+		}
+		Employee *e = nullptr;
+		if (typeS == "0") {
+			e = new OfficeEmployee(tmp.substr(pos + 1));
+		} else if (typeS == "1") {
+			e = new Worker(tmp.substr(pos + 1));
+		}
+		addEmployee(e);
+	}
+	file.close();
+	return *this;
+}
+
+Company &Company::saveToFile(const std::string &filePath) {
+	std::ofstream file(filePath.c_str());
+	if (!file.is_open()) {
+		std::cout << "Failed to open file \"" << filePath << "\"\n";
+		return *this;
+	}
+	for (auto &employee : employees) {
+		if (employee->getType() == EmployeeType::TYPE_OFFICE) {
+			file << "0;" << *dynamic_cast<OfficeEmployee *>(employee) << '\n';
+		} else if (employee->getType() == EmployeeType::TYPE_WORKER) {
+			file << "1;" << *dynamic_cast<Worker *>(employee) << '\n';
+		}
+	}
+	file.close();
 	return *this;
 }

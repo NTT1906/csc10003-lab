@@ -6,28 +6,30 @@ using namespace std;
 class A{
 	char *m_s;
 public:
-	A() {
-		cout << "Default A got called!\n";
-		m_s = strdup("default");
-	}
-	A(char *s) {
-		cout << "Input char * A got called\n";
-//		m_s = s;
-		m_s = strdup(s);
-	}
-	A(const A &other) {
-		cout << "Copy A got called!\n";
-		m_s = strdup(other.m_s);
-	}
+	A() { m_s = strdup("default"); }
+	A(char *s) { m_s = strdup(s); }
+	A(const A &other) { m_s = strdup(other.m_s); }
 	virtual void prepare() { cout << "A "; }
 	void display() {
 		this->prepare();
 		cout << m_s << endl;
 	}
 	virtual ~A() {
-		cout << "Destroying ";
-		display();
+		cout << "Calling A from ";
+		prepare();
+		cout << "\n";
 		delete m_s;
+	}
+	friend ostream &operator<<(ostream &os, const A &a) {
+		return os << a.m_s;
+	}
+
+	friend istream &operator>>(istream &is, A &a) {
+		char buffer[100];
+		is.getline(buffer, 100);
+		delete[] a.m_s;
+		a.m_s = strdup(buffer);
+		return is;
 	}
 };
 
@@ -41,28 +43,25 @@ public:
 	}
 	void prepare() { cout << "B "; }
 	~B() override {
+		cout << "Bye from B\n";
 	};
+	friend ostream &operator<<(ostream &os, const B &b) {
+		return os << static_cast<const A &>(b);
+	}
+
+	friend istream& operator>>(istream& is, B &b) {
+		return is >> static_cast<A &>(b);
+	}
 };
 
 void foo(A *obj1, A obj2) {
-	(*obj1).display();
-//	A tmp = *obj1;
-//	tmp.display();
 	obj1->display();
 	obj2.display();
-	(&obj2)->display();
 }
 
 int main() {
 	B obj1("text");
-	std::cout << "Obj1    : ";
-	obj1.display();
-	std::cout << "Obj1 REF: ";
-	(&obj1)->display();
 	A *obj2 = new B(obj1);
-	obj2->display();
-	std::cout << "Obj2 DEREF: ";
-	(*obj2).display();
 	foo(&obj1, *obj2);
 	delete obj2;
 	return 0;
