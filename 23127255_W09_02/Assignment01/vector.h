@@ -28,6 +28,8 @@ public:
 
 	~MyVector();
 
+	string getTypeName() const;
+
 	int getSize();
 	T getItem(int index);
 	void setItem(T value, int index);
@@ -54,17 +56,21 @@ template<class T>
 MyVector<T>::MyVector() : arr{nullptr}, size{0} {}
 
 template<class T>
-MyVector<T>::MyVector(int n) : arr{new T[n]}, size{n} {}
+MyVector<T>::MyVector(int n) : arr{nullptr}, size{n} {
+	arr = new T[n];
+}
 
 template<class T>
-MyVector<T>::MyVector(T *a, int n) : arr{new T[n]}, size{n} {
+MyVector<T>::MyVector(T *a, int n) : arr{nullptr}, size{n} {
+	arr = new T[n];
 	for (int i = 0; i < size; ++i) {
 		arr[i] = a[i];
 	}
 }
 
 template<class T>
-MyVector<T>::MyVector(const MyVector &v) : arr{new T[v.size]}, size{v.size} {
+MyVector<T>::MyVector(const MyVector &v) : arr{nullptr}, size{v.size} {
+	arr = new T[v.size];
 	for (int i = 0; i < size; ++i) {
 		arr[i] = v[i];
 	}
@@ -91,13 +97,12 @@ void MyVector<T>::setItem(T value, int index) {
 	arr[index] = value;
 }
 
-
 #include <sstream>
 
 template<class T>
 string MyVector<T>::toString() {
 	std::ostringstream ss;
-	ss << "MyVector<" << typeid(T).name() << ">(";
+	ss << "MyVector<" << getTypeName() << ">[" << size << "](";
 	for (int i = 0; i < size; ++i) {
 		ss << arr[i];
 		if (i != size - 1) ss << ", ";
@@ -122,13 +127,14 @@ void MyVector<T>::addRange(T *a, int n) {
 template<class T>
 void MyVector<T>::clear() {
 	delete[] arr;
+	arr = nullptr;
 	size = 0;
 }
 
 template<class T>
 bool MyVector<T>::contains(T value) {
-	for (auto &a : arr) {
-		if (a == value) {
+	for (int i = 0; i < size; ++i) {
+		if (arr[i] == value) {
 			return true;
 		}
 	}
@@ -193,6 +199,9 @@ void MyVector<T>::remove(T value) {
 			++c;
 		}
 	}
+	if (c == 0) {
+		return;
+	}
 	T *newArr = new T[size - c];
 	int newSize = 0;
 	for (int i = 0; i < size; ++i) {
@@ -225,7 +234,7 @@ void MyVector<T>::reverse() {
 	int l = 0;
 	int r = size - 1;
 	while (l < r) {
-		T *tmp = arr[l];
+		T tmp = arr[l];
 		arr[l] = arr[r];
 		arr[r] = tmp;
 		++l;
@@ -249,5 +258,9 @@ void MyVector<T>::sortDesc() {
 	});
 }
 
+template<class T>
+string MyVector<T>::getTypeName() const {
+	return typeid(T).name();
+}
 
 #endif //INC_23127255_W09_VECTOR_H

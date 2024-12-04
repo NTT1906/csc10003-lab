@@ -6,6 +6,7 @@ Fraction::Fraction(int _num, int _den) : num{_num} {
 		throw std::invalid_argument("Error: Denominator cannot be zero.");
 	}
 	den = _den;
+	reduce();
 }
 
 Fraction::Fraction(const string &s) {
@@ -34,6 +35,7 @@ Fraction::Fraction(const string &s) {
 	} catch (const std::out_of_range &e) {
 		throw std::invalid_argument("Error: Value out of range. " + string(e.what()));
 	}
+	reduce();
 }
 
 Fraction Fraction::operator+(const Fraction &other) const {
@@ -42,18 +44,21 @@ Fraction Fraction::operator+(const Fraction &other) const {
 }
 
 Fraction Fraction::operator-(const Fraction &other) const {
-	return {num * other.den - other.num * den, den * other.den};
+	Fraction f = {num * other.den - other.num * den, den * other.den};
+	return f.reduce();
 }
 
 Fraction Fraction::operator*(const Fraction &other) const {
-	return {num * other.num, den * other.den};
+	Fraction f = {num * other.num, den * other.den};
+	return f.reduce();
 }
 
 Fraction Fraction::operator/(const Fraction &other) const {
 	if (other.num == 0) {
 		throw std::invalid_argument("Error: Division by zero");
 	}
-	return {num * other.den, den * other.num};
+	Fraction f = {num * other.den, den * other.num};
+	return f.reduce();
 }
 
 bool Fraction::operator<(const Fraction &other) const {
@@ -72,6 +77,14 @@ bool Fraction::operator>=(const Fraction &other) const {
 	return !(*this < other);
 }
 
+bool Fraction::operator==(const Fraction &other) const {
+	return num * other.den == other.num * den;
+}
+
+bool Fraction::operator!=(const Fraction &other) const {
+	return !(*this == other);
+}
+
 Fraction &Fraction::reduce() {
 	int d = den;
 	int gcd = num;
@@ -86,19 +99,9 @@ Fraction &Fraction::reduce() {
 	return *this;
 }
 
-Fraction Fraction::reduceCopy() {
-	Fraction f;
-	int d = f.den;
-	int gcd = f.num;
-	while (d != 0) {
-		int temp = d;
-		d = gcd % d;
-		gcd = temp;
-	}
-
-	f.num /= gcd;
-	f.den /= gcd;
-	return f;
+Fraction Fraction::reduceCopy() const {
+	Fraction f = *this;
+	return f.reduce();
 }
 
 std::ostream &operator<<(std::ostream &os, const Fraction &f) {
@@ -111,11 +114,13 @@ Fraction &Fraction::set(int _num, int _den) {
 	}
 	num = _num;
 	den = _den;
+	reduce();
 	return *this;
 }
 
 Fraction &Fraction::setNum(int _num) {
 	num = _num;
+	reduce();
 	return *this;
 }
 
@@ -124,6 +129,7 @@ Fraction &Fraction::setDen(int _den) {
 		throw std::invalid_argument("Error: Denominator cannot be zero.");
 	}
 	den = _den;
+	reduce();
 	return *this;
 }
 

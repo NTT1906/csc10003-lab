@@ -23,7 +23,7 @@ public:
 	int getDen() const;
 
 	Fraction &reduce();
-	static Fraction reduceCopy() ;
+	Fraction reduceCopy() const;
 
 	Fraction operator+(const Fraction &other) const;
 	Fraction operator-(const Fraction &other) const;
@@ -34,6 +34,8 @@ public:
 	bool operator>(const Fraction &other) const;
 	bool operator<=(const Fraction &other) const;
 	bool operator>=(const Fraction &other) const;
+	bool operator==(const Fraction &other) const;
+	bool operator!=(const Fraction &other) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Fraction &f);
 
